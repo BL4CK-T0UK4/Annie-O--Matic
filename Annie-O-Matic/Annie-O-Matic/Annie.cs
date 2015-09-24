@@ -45,10 +45,9 @@ namespace Annie_O_Matic
             Game.OnUpdate += OnGameUpdate;
         }
 
-       
         private static void LastHit()
         {
-            var canQ = Config.Item("clearMenu.lastMenu.useqlast").GetValue<bool>();
+            var canQ = Config.Item("clearMenu.lastHitMenu.useqlast").GetValue<bool>();
 
             var minionNumber =
                MinionManager.GetMinions(Player.Position, Q.Range, MinionTypes.All,
@@ -68,33 +67,50 @@ namespace Annie_O_Matic
 
         private static void LaneClear()
         {
-            var canQ = Config.Item("clearMenu.laneMenu.useq").GetValue<bool>();
-            var canW = Config.Item("clearMenu.laneMenu.usew").GetValue<bool>();
-            var mambo = Config.Item("clearMenu.laneMenu.mambo").GetValue<bool>();
-            var minMana = Config.Item("clearMenu.laneMenu.manalimit").GetValue<Slider>().Value;
+            var canQ = Config.Item("farmMenu.laneClearMenu.useq").GetValue<bool>();
+            var canW = Config.Item("farmMenu.laneClearMenu.usew").GetValue<bool>();
+            var mambo = Config.Item("farmMenu.laneClearMenu.mambo").GetValue<bool>();
+            var minMana = Config.Item("farmMenu.laneClearMenu.manalimit").GetValue<Slider>().Value;
+
+            #region Q Usage
             var minionNumber =
-               MinionManager.GetMinions(Player.Position, Q.Range, MinionTypes.All,
-                   MinionTeam.NotAlly).FirstOrDefault();
+                 MinionManager.GetMinions(Player.Position, Q.Range,
+                 MinionTypes.All, MinionTeam.NotAlly).FirstOrDefault();
 
             if (minionNumber == null)
                 return;
 
             var minion = minionNumber;
-            
+
             var minionhp = minion.Health;
 
-          
+
 
             if (canQ && Q.IsReady() && minion.IsValidTarget(Q.Range) && minionhp <= Q.GetDamage(minion) && minionhp > Player.GetAutoAttackDamage(minion) && Player.ManaPercent >= minMana)
             {
                 Q.Cast(minion);
             }
+            
+            #endregion
 
+            #region W Usage
+            
+            var wMinionNumber =
+                MinionManager.GetMinions(Player.Position,
+                W.Range, MinionTypes.All, MinionTeam.NotAlly);
 
-            if (canW && W.IsReady() && minion.IsValidTarget(W.Range) && minionhp <= W.GetDamage(minion) && Player.ManaPercent >= minMana)
+            if (minionNumber == null)
+                return;
+
+            var wPredict = W.GetLineFarmLocation(wMinionNumber);
+
+            if (canW && W.IsReady() && minion.IsValidTarget(W.Range) && minionhp <= W.GetDamage(minion) && Player.ManaPercent >= minMana && wPredict.MinionsHit >= 2)
             {
                 W.Cast(minion);
-            }
+            } 
+            #endregion
+
+
         }
 
         private static void OnGameUpdate(EventArgs args)
@@ -113,5 +129,17 @@ namespace Annie_O_Matic
             }
         }
 
+        private static void DamageCalc()
+        {
+            var target = TargetSelector.GetTarget(Player.CastRange, TargetSelector.DamageType.Magical);
+
+            var qDamage = Q.GetDamage(target);
+            var wDamage = W.GetDamage(target);
+            var rDamage = R.GetDamage(target);
+
+            var totalDamage = qDamage + wDamage + rDamage;    
+        }
+
+        
     }
 }
