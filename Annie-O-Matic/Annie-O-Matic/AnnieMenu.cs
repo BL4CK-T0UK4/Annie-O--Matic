@@ -84,6 +84,14 @@ namespace Annie_O_Matic
             } 
             #endregion
 
+            #region AutoStack
+
+            var miscMenu = new Menu("Stack-O-Matic", "Stack-O-Matic");
+            {
+                miscMenu.AddItem(new MenuItem("miscMenu.stackPassive", "Stack Passive ?")).SetValue(true);
+            }
+            Config.AddSubMenu(miscMenu);
+            #endregion
             Config.AddToMainMenu();
         }
     }

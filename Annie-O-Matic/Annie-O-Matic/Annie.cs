@@ -132,6 +132,8 @@ namespace Annie_O_Matic
 
         }
 
+        private static void Combo() { }
+
         private static void OnGameUpdate(EventArgs args)
         {
             Orbwalker.SetAttack(true);
@@ -145,8 +147,12 @@ namespace Annie_O_Matic
                 case Orbwalking.OrbwalkingMode.LaneClear:
                     LaneClear();
                     break;
+
+                case Orbwalking.OrbwalkingMode.Combo:
+                    Combo();
+                    break;
             }
-            
+            autoStack();
         }
 
         private static void DamageCalc()
@@ -163,6 +169,21 @@ namespace Annie_O_Matic
             Game.PrintChat(totalmana);
         }
 
-        
+        private static void autoStack()
+        {
+            var canStack = Config.Item("miscMenu.stackPassive").GetValue<bool>();
+            if (ObjectManager.Player.HasBuff("pyromania_particle") == false)
+            {
+                if (canStack)
+                {
+                    E.Cast();
+                    if (E.IsCharging)
+                    {
+                        W.Cast();
+                    }
+                }
+            }
+
+        }
     }
 }
