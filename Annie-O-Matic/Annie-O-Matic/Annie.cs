@@ -145,7 +145,7 @@ namespace Annie_O_Matic
             var wPredict = W.GetPrediction(target, true, 250f);
             if (Q.IsReady() && canQ && target.IsValidTarget(Q.Range))
             {
-                Q.Cast();
+                Q.Cast(target);
             }
 
             if (W.IsReady() && canW && target.IsValidTarget(W.Range))
