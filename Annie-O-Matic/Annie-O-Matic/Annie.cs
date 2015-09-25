@@ -177,7 +177,7 @@ namespace Annie_O_Matic
                 if (canStack)
                 {
                     E.Cast();
-                    if (E.IsCharging)
+                    if (E.Cooldown > 0)
                     {
                         W.Cast();
                     }
