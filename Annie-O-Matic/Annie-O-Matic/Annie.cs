@@ -143,6 +143,12 @@ namespace Annie_O_Matic
             var canR = Config.Item("comboMenu.canR").GetValue<bool>();
 
             var wPredict = W.GetPrediction(target, true, 250f);
+
+            if (R.IsReady() && canW && target.IsValidTarget(R.Range))
+            {
+                R.Cast(target.Position);
+            }
+
             if (Q.IsReady() && canQ && target.IsValidTarget(Q.Range))
             {
                 Q.Cast(target);
@@ -152,6 +158,8 @@ namespace Annie_O_Matic
             {
                 W.Cast(target.Position);
             }
+
+
         }
 
         private static void OnGameUpdate(EventArgs args)
