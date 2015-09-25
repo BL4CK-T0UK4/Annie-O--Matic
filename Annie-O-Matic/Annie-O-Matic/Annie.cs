@@ -141,8 +141,9 @@ namespace Annie_O_Matic
             var canQ = Config.Item("comboMenu.canQ").GetValue<bool>();
             var canW = Config.Item("comboMenu.canW").GetValue<bool>();
             var canR = Config.Item("comboMenu.canR").GetValue<bool>();
+            var rSlider = Config.Item("comboMenu.useRifHit").GetValue<bool>();
 
-            var wPredict = W.GetPrediction(target, true, 250f);
+           
 
             if (Q.IsReady() && canQ && target.IsValidTarget(Q.Range))
             {
@@ -153,8 +154,18 @@ namespace Annie_O_Matic
 
                 else
                 {
-                    R.Cast(target.Position);
+                    
 
+                    foreach (var rhit in
+                    ObjectManager.Get<Obj_AI_Hero>()
+                        .Where(enemy => enemy.IsValidTarget())
+                        .Select(x => R.GetPrediction(x, true)))
+                    
+                        
+                    {
+                        R.Cast(rhit.CastPosition);
+
+                    }
                     Q.Cast(target);
                 }
 
