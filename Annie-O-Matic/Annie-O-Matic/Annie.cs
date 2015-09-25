@@ -132,7 +132,27 @@ namespace Annie_O_Matic
 
         }
 
-        private static void Combo() { }
+        private static void Combo()
+        {
+            var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
+            if (target == null)
+                return;
+
+            var canQ = Config.Item("comboMenu.canQ").GetValue<bool>();
+            var canW = Config.Item("comboMenu.canW").GetValue<bool>();
+            var canR = Config.Item("comboMenu.canR").GetValue<bool>();
+
+            var wPredict = W.GetPrediction(target, true, 250f);
+            if (Q.IsReady() && canQ && target.IsValidTarget(Q.Range))
+            {
+                Q.Cast();
+            }
+
+            if (W.IsReady() && canW && target.IsValidTarget(W.Range))
+            {
+                W.Cast(target.Position);
+            }
+        }
 
         private static void OnGameUpdate(EventArgs args)
         {
