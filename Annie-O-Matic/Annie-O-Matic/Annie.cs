@@ -153,7 +153,7 @@ namespace Annie_O_Matic
 
                 else
                 {
-                    R.Cast(target);
+                    R.Cast(target.Position);
 
                     Q.Cast(target);
                 }
