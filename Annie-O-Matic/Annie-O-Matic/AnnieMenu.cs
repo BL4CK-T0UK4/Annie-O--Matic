@@ -26,6 +26,18 @@ namespace Annie_O_Matic
 
             Orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalking"));
 
+            #region Draws
+
+            var drawMenu = new Menu("Drawing-o-Matic Settings", "Drawing-o-Matic Settings");
+            {
+                drawMenu.AddItem(new MenuItem("drawMenu.drawOn", "Drawings")).SetValue(true);
+                drawMenu.AddItem(new MenuItem("drawMenu.drawQ", "Draw - Q -")).SetValue(true);
+                drawMenu.AddItem(new MenuItem("drawMenu.drawW", "Draw - W -")).SetValue(true);
+                drawMenu.AddItem(new MenuItem("drawMenu.drawR", "Draw - R -")).SetValue(true);
+            }
+            Config.AddSubMenu(drawMenu);
+            #endregion
+
             #region WomboCombo
             var comboMenu = new Menu("Combo-O-Matic Settings", "Combo-O-Matic Settings");
             {
@@ -35,8 +47,10 @@ namespace Annie_O_Matic
                 comboMenu.AddItem(new MenuItem("comboMenu.canR", "Use - R -")).SetValue(false);
                 comboMenu.AddItem(new MenuItem("comboMenu.useRifHit", "Use - R -  If Hits X Enemies"))
                        .SetValue(new Slider(2, 1, 5));
-                
+
+                Config.AddSubMenu(comboMenu);   
             }
+
             #endregion
 
             #region Farming
@@ -52,6 +66,8 @@ namespace Annie_O_Matic
                         .SetValue(new Slider(60, 1, 100));
                     laneClearMenu.AddItem(new MenuItem("farmMenu.laneClearMenu.usewslider", "Use [W] If Hits X Enemies"))
                         .SetValue(new Slider(3, 1, 5));
+                    laneClearMenu.AddItem(new MenuItem("farmMenu.laneClearMenu.saveBuff", "Save passive?"))
+                        .SetValue(false);
                     laneClearMenu.AddItem(new MenuItem("farmMenu.laneClearMenu.mambo",
                         "MAMBO LIKE A CRAZY  [! DANGER LOW MANA RISK !] ")).SetValue(false);
                     farmMenu.AddSubMenu(laneClearMenu);
@@ -61,6 +77,7 @@ namespace Annie_O_Matic
                 {
 
                     lastHitMenu.AddItem(new MenuItem("farmMenu.lastHitMenu.useqlast", "Use [Q] To Last Hit")).SetValue(true);
+                    lastHitMenu.AddItem(new MenuItem("farmMenu.lastHitMenu.saveBuff", "Save passive?")).SetValue(true);
                     farmMenu.AddSubMenu(lastHitMenu);
                 }
                 Config.AddSubMenu(farmMenu);

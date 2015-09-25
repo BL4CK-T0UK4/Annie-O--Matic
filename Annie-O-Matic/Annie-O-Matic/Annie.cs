@@ -18,19 +18,25 @@ namespace Annie_O_Matic
     {
         public static Obj_AI_Hero Player { get { return ObjectManager.Player; } }
 
-        #region Spells and Menu
-        // Menu and Orbwalker
-       
-        
+        #region Spells 
         //Spells
-        private static Spell Q = new Spell(SpellSlot.Q, 625);
-        private static Spell W = new Spell(SpellSlot.W, 625);
-        private static Spell E = new Spell(SpellSlot.E);
-        private static Spell R = new Spell(SpellSlot.R, 600);
-        
-        
+        public static Spell Q = new Spell(SpellSlot.Q, 625);
+        public static Spell W = new Spell(SpellSlot.W, 550);
+        public static Spell E = new Spell(SpellSlot.E);
+        public static Spell R = new Spell(SpellSlot.R, 600);  
         #endregion
 
+        #region Passive
+        //Thx Hoes
+        public static int GetPassiveBuff
+        {
+            get
+            {
+                var data = ObjectManager.Player.Buffs.FirstOrDefault(b => b.DisplayName == "Pyromania");
+                return data != null ? data.Count : 0;
+            }
+        }
+        #endregion
         public static void Load(EventArgs args)
         {
 
@@ -43,11 +49,17 @@ namespace Annie_O_Matic
             W.SetSkillshot(0.5f, 250f, float.MaxValue, false, SkillshotType.SkillshotCone);
             R.SetSkillshot(0.2f, 250f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             Game.OnUpdate += OnGameUpdate;
+            Drawing.OnDraw += AnnieDraws.OnDraw;
         }
 
         private static void LastHit()
         {
-            var canQ = Config.Item("clearMenu.lastHitMenu.useqlast").GetValue<bool>();
+            var canQ = Config.Item("farmMenu.lastHitMenu.useqlast").GetValue<bool>();
+            var saveBuff = Config.Item("farmMenu.laneClearMenu.saveBuff").GetValue<bool>();
+            var buffStatus = ObjectManager.Player.HasBuff("pyromania_particle");
+
+            if (saveBuff && buffStatus)
+                return;
 
             var minionNumber =
                MinionManager.GetMinions(Player.Position, Q.Range, MinionTypes.All,
@@ -67,10 +79,17 @@ namespace Annie_O_Matic
 
         private static void LaneClear()
         {
-            var canQ = Config.Item("farmMenu.laneClearMenu.useq").GetValue<bool>();
-            var canW = Config.Item("farmMenu.laneClearMenu.usew").GetValue<bool>();
+            var canQ = Config.Item("farmMenu.laneClearMenu.canQ").GetValue<bool>();
+            var canW = Config.Item("farmMenu.laneClearMenu.canW").GetValue<bool>();
             var mambo = Config.Item("farmMenu.laneClearMenu.mambo").GetValue<bool>();
             var minMana = Config.Item("farmMenu.laneClearMenu.manalimit").GetValue<Slider>().Value;
+            var minW = Config.Item("farmMenu.laneClearMenu.usewslider").GetValue<Slider>().Value;
+            var saveBuff = Config.Item("farmMenu.laneClearMenu.saveBuff").GetValue<bool>();
+            var buffStatus = ObjectManager.Player.HasBuff("pyromania_particle");
+
+            if (saveBuff && buffStatus)
+                return;
+
 
             #region Q Usage
             var minionNumber =
@@ -84,7 +103,7 @@ namespace Annie_O_Matic
 
             var minionhp = minion.Health;
 
-
+           
 
             if (canQ && Q.IsReady() && minion.IsValidTarget(Q.Range) && minionhp <= Q.GetDamage(minion) && minionhp > Player.GetAutoAttackDamage(minion) && Player.ManaPercent >= minMana)
             {
@@ -99,12 +118,12 @@ namespace Annie_O_Matic
                 MinionManager.GetMinions(Player.Position,
                 W.Range, MinionTypes.All, MinionTeam.NotAlly);
 
-            if (minionNumber == null)
+            if (wMinionNumber == null)
                 return;
 
             var wPredict = W.GetLineFarmLocation(wMinionNumber);
 
-            if (canW && W.IsReady() && minion.IsValidTarget(W.Range) && minionhp <= W.GetDamage(minion) && Player.ManaPercent >= minMana && wPredict.MinionsHit >= 2)
+            if (canW && W.IsReady() && minion.IsValidTarget(W.Range) && minionhp <= W.GetDamage(minion) && Player.ManaPercent >= minMana && wPredict.MinionsHit >= 3)
             {
                 W.Cast(minion);
             } 
@@ -127,6 +146,7 @@ namespace Annie_O_Matic
                     LaneClear();
                     break;
             }
+            
         }
 
         private static void DamageCalc()
@@ -137,7 +157,10 @@ namespace Annie_O_Matic
             var wDamage = W.GetDamage(target);
             var rDamage = R.GetDamage(target);
 
-            var totalDamage = qDamage + wDamage + rDamage;    
+            var totalDamage = qDamage + wDamage + rDamage;
+            string totalmana = Q.ManaCost.ToString();
+
+            Game.PrintChat(totalmana);
         }
 
         
