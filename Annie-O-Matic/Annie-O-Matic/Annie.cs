@@ -179,7 +179,7 @@ namespace Annie_O_Matic
                     E.Cast();
                     if (E.Cooldown > 0)
                     {
-                        W.Cast();
+                        W.Cast(Player.Position);
                     }
                 }
             }
